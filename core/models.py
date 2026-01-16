@@ -1,8 +1,8 @@
 import random
 import uuid
-from django.utils import timezone
 
 from django.db import models
+from django.utils import timezone
 
 
 # Create your models here.
