@@ -34,6 +34,8 @@ class Student(models.Model):
     primary_subject = models.ForeignKey(
         Subject,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True
     )
     created_at = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
@@ -89,4 +91,41 @@ class Certificate(models.Model):
             models.Index(fields=['subject']),
         ]
 
+class Group(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=30)
 
+    students = models.ManyToManyField(
+        Student,
+        through='GroupMembership',
+        related_name='groups',
+        blank=True
+    )
+
+    class Meta:
+        db_table = 'groups'
+
+    def __str__(self):
+        return self.name
+
+class GroupMembership(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='memberships')
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='memberships')
+
+    joined_at = models.DateField(default=timezone.now)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = 'group_memberships'
+        constraints = [
+            models.UniqueConstraint(fields=['group', 'student'], name='uniq_group_student')
+        ]
+        indexes = [
+            models.Index(fields=['group']),
+            models.Index(fields=['student']),
+        ]
+
+    def __str__(self):
+        return f'{self.group} - {self.student}'

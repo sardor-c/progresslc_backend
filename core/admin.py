@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from core.models import Student, Subject, Certificate, Contact
+from core.models import *
 
 
 # Register your models here.
@@ -19,25 +19,33 @@ class ContactInline(admin.TabularInline):
     fields = ('student', 'phone', 'is_active')
     show_change_link = True
 
+
+class GroupMembershipInline(admin.TabularInline):
+    model = GroupMembership
+    extra = 0
+    autocomplete_fields = ['student']
+    fields = ('student', 'group','joined_at', 'is_active')
+    readonly_fields = ('joined_at', 'student', 'group')
+    ordering = ('student__first_name',)
+
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = (
-        'id',
-        'test_id',
         'first_name',
         'last_name',
+        'test_id',
         'primary_subject',
         'rating',
         'is_active',
         'created_at',
     )
     list_filter = ('primary_subject', 'is_active',)
-    search_fields = ('first_name', 'last_name', 'id', 'test_id')
-    ordering = ('-first_name',)
+    search_fields = ('first_name', 'last_name', 'test_id')
+    ordering = ('first_name',)
     readonly_fields = ('id', "created_at")
     list_per_page = 50
 
-    inlines = [CertificateInline, ContactInline]
+    inlines = [CertificateInline, ContactInline, GroupMembershipInline]
 
 @admin.register(Certificate)
 class CertificateAdmin(admin.ModelAdmin):
@@ -59,3 +67,17 @@ class ContactAdmin(admin.ModelAdmin):
     list_display = ('id', 'student', 'phone')
     search_fields = ('id', 'student__first_name', 'student__last_name')
     ordering = ['id']
+
+
+
+@admin.register(Group)
+class GroupAdmin(admin.ModelAdmin):
+    inlines = [GroupMembershipInline]
+    search_fields = ('name',)
+
+@admin.register(GroupMembership)
+class GroupMembershipAdmin(admin.ModelAdmin):
+    list_display = ('group', 'student', 'joined_at', 'is_active')
+    list_filter = ('is_active',)
+    search_fields = ('group__name', "student__first_name", "student__last_name")
+    autocomplete_fields = ['group', 'student']
