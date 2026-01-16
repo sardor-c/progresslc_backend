@@ -13,6 +13,11 @@ class Subject(models.Model):
     code = models.CharField(max_length=20, unique=True)
     name_uz = models.CharField(max_length=20)
 
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = 'subjects'
+
     def __str__(self):
         return self.name_uz
 
@@ -26,22 +31,18 @@ def generate_test_id():
 
 class Student(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    test_id = models.CharField(max_length=4, default=generate_test_id, unique=True)
-    first_name = models.CharField(max_length=30, default="", blank=True)
-    last_name = models.CharField(max_length=30, default="", blank=True)
+    test_id = models.CharField(max_length=4, default=generate_test_id, unique=True, db_index=True)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    school_grade = models.PositiveSmallIntegerField(default=11, null=True, blank=True)
     rating = models.FloatField(default=0.0)
 
-    primary_subject = models.ForeignKey(
-        Subject,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
     created_at = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = "students"
+        indexes = [models.Index(fields=["test_id"])]
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}".strip() or str(self.id)
@@ -49,15 +50,10 @@ class Student(models.Model):
 
 class Contact(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="contacts", db_index=True)
 
-    student = models.ForeignKey(
-        Student,
-        on_delete=models.CASCADE,
-        related_name="contacts",
-        db_index=True
-    )
-
-    phone = models.CharField(max_length=13)
+    phone = models.CharField(max_length=20)
+    label = models.CharField(max_length=20, default='main', blank=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
@@ -67,22 +63,12 @@ class Contact(models.Model):
 
 class Certificate(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="certificates", db_index=True)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="certificates", db_index=True, )
 
-    student = models.ForeignKey(
-        Student,
-        on_delete=models.CASCADE,
-        related_name="certificates",
-        db_index=True
-    )
-
-    subject = models.ForeignKey(
-        Subject,
-        on_delete=models.CASCADE,
-        related_name="certificates",
-        db_index=True,
-    )
-
-    count = models.FloatField(default=0.0)
+    score = models.FloatField(default=0.0)
+    title = models.CharField(max_length=100, blank=True, default='')
+    issued_at = models.DateField(default=timezone.now)
     is_active = models.BooleanField(default=True)
 
     class Meta:
@@ -95,19 +81,21 @@ class Certificate(models.Model):
 
 class Group(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    subject = models.ForeignKey(Subject, on_delete=models.PROTECT, related_name='groups', db_index=True)
     name = models.CharField(max_length=30)
-
-    students = models.ManyToManyField(
-        Student,
-        through='GroupMembership',
-        related_name='groups',
-        blank=True
-    )
-
     is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    students = models.ManyToManyField(Student, through='GroupMembership', related_name='groups', blank=True)
 
     class Meta:
         db_table = 'groups'
+        constraints = [
+            models.UniqueConstraint(fields=["subject", "name"], name="uniq_group_subject_name"),
+        ]
+        indexes = [
+            models.Index(fields=["subject"]),
+        ]
 
     def __str__(self):
         return self.name
@@ -116,10 +104,12 @@ class Group(models.Model):
 class GroupMembership(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='memberships')
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='memberships')
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='memberships', db_index=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='memberships', db_index=True)
 
     joined_at = models.DateField(default=timezone.now)
+    left_at = models.DateField(null=True, blank=True)
+
     is_active = models.BooleanField(default=True)
 
     class Meta:
@@ -130,6 +120,7 @@ class GroupMembership(models.Model):
         indexes = [
             models.Index(fields=['group']),
             models.Index(fields=['student']),
+            models.Index(fields=['group', 'is_active']),
         ]
 
     def __str__(self):
@@ -154,5 +145,6 @@ class Payment(models.Model):
             models.Index(fields=['group']),
             models.Index(fields=['student']),
         ]
+
     def __str__(self):
         return f"{self.student}'s payment for the {self.group} group"
