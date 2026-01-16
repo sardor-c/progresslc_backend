@@ -28,6 +28,14 @@ class GroupMembershipInline(admin.TabularInline):
     readonly_fields = ('joined_at', 'student', 'group')
     ordering = ('student__first_name',)
 
+class PaymentInline(admin.TabularInline):
+    model = Payment
+    extra = 0
+    autocomplete_fields = ['student']
+    readonly_fields = ('student', 'group', 'start_at', 'end_at')
+    fields = ('student', 'group', 'amount','start_at', 'end_at')
+
+
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = (
@@ -45,7 +53,7 @@ class StudentAdmin(admin.ModelAdmin):
     readonly_fields = ('id', "created_at")
     list_per_page = 50
 
-    inlines = [CertificateInline, ContactInline, GroupMembershipInline]
+    inlines = [CertificateInline, ContactInline, GroupMembershipInline, PaymentInline]
 
 @admin.register(Certificate)
 class CertificateAdmin(admin.ModelAdmin):
@@ -72,7 +80,7 @@ class ContactAdmin(admin.ModelAdmin):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    inlines = [GroupMembershipInline]
+    inlines = [GroupMembershipInline, PaymentInline]
     search_fields = ('name',)
 
 @admin.register(GroupMembership)
@@ -80,4 +88,11 @@ class GroupMembershipAdmin(admin.ModelAdmin):
     list_display = ('group', 'student', 'joined_at', 'is_active')
     list_filter = ('is_active',)
     search_fields = ('group__name', "student__first_name", "student__last_name")
+    autocomplete_fields = ['group', 'student']
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ('group', 'student', 'amount', 'start_at', 'end_at','is_debtor')
+    list_filter = ('group', 'student', 'start_at', 'is_debtor')
+    search_fields = ('group__name', "student__first_name", 'student__last_name',)
     autocomplete_fields = ['group', 'student']

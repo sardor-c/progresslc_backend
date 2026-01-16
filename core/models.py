@@ -64,6 +64,7 @@ class Contact(models.Model):
         db_table = 'contacts'
         indexes = [models.Index(fields=['student'])]
 
+
 class Certificate(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
@@ -91,6 +92,7 @@ class Certificate(models.Model):
             models.Index(fields=['subject']),
         ]
 
+
 class Group(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=30)
@@ -102,11 +104,14 @@ class Group(models.Model):
         blank=True
     )
 
+    is_active = models.BooleanField(default=True)
+
     class Meta:
         db_table = 'groups'
 
     def __str__(self):
         return self.name
+
 
 class GroupMembership(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -129,3 +134,25 @@ class GroupMembership(models.Model):
 
     def __str__(self):
         return f'{self.group} - {self.student}'
+
+
+class Payment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='payments')
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='payments')
+    start_at = models.DateField()
+    end_at = models.DateField()
+    amount = models.IntegerField()
+    is_debtor = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'payments'
+        constraints = [
+            models.UniqueConstraint(fields=['group', 'student'], name='uniq_payment')
+        ]
+        indexes = [
+            models.Index(fields=['group']),
+            models.Index(fields=['student']),
+        ]
+    def __str__(self):
+        return f"{self.student}'s payment for the {self.group} group"
