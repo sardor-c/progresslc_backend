@@ -1,0 +1,10 @@
+POST http://localhost:8000/api/auth/register/
+User-Agent: IntelliJ HTTP Client/PyCharm 2025.2.6
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 0
+
+<> 2026-01-18T125341.400.json
+
+###
+
