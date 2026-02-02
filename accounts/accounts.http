@@ -1,0 +1,33 @@
+### Registration
+POST http://localhost:8000/api/auth/register/
+content-type: application/json
+
+{
+  "email": "director1@gmail.com",
+  "first_name": "Ali",
+  "last_name": "Karimov",
+  "password": "StrongPass123",
+  "role": "DIRECTOR"
+}
+
+
+### Login
+POST http://localhost:8000/api/auth/login/
+content-type: application/json
+
+{
+  "email": "director1@gmail.com",
+  "password": "StrongPass123"
+}
+
+
+### Me
+GET http://localhost:8000/api/auth/me/
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwMDIxMzI0LCJpYXQiOjE3NzAwMjA3MjQsImp0aSI6IjhmNzAzOWM3ZWFjMzRhNDE5ZmZkMjEzZTMzZmJmOGI0IiwidXNlcl9pZCI6IjIiLCJyb2xlIjoiRElSRUNUT1IiLCJlbWFpbCI6ImRpcmVjdG9yMUBnbWFpbC5jb20ifQ.IWIADshXk6S7zXEMH4B54hF8i908CXtR39DUYrcCxKI
+
+{
+  "email": "director1@gmail.com",
+  "password": "StrongPass123"
+}
+

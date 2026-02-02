@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import User
+from .models import User, DirectorProfile, TeacherProfile, StudentProfile
 
 
 # Register your models here.
@@ -30,3 +30,15 @@ class CustomUserAdmin(UserAdmin):
             "fields": ("email", "first_name", "last_name", "password1", "password2", "role"),
         }),
     )
+
+@admin.register(DirectorProfile)
+class DirectorProfileAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(TeacherProfile)
+class TeacherProfileAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(StudentProfile)
+class StudentProfileAdmin(admin.ModelAdmin):
+    pass
