@@ -1,5 +1,76 @@
 GET http://localhost:8000/api/auth/me/
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwMDIxMzI0LCJpYXQiOjE3NzAwMjA3MjQsImp0aSI6IjhmNzAzOWM3ZWFjMzRhNDE5ZmZkMjEzZTMzZmJmOGI0IiwidXNlcl9pZCI6IjIiLCJyb2xlIjoiRElSRUNUT1IiLCJlbWFpbCI6ImRpcmVjdG9yMUBnbWFpbC5jb20ifQ.IWIADshXk6S7zXEMH4B54hF8i908CXtR39DUYrcCxKI
+User-Agent: IntelliJ HTTP Client/PyCharm 2025.2.6
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 67
+
+{
+  "email": "director1@gmail.com",
+  "password": "StrongPass123"
+}
+
+<> 2026-02-02T132558.200.json
+
+###
+
+POST http://localhost:8000/api/auth/login/
+content-type: application/json
+Content-Length: 67
+User-Agent: IntelliJ HTTP Client/PyCharm 2025.2.6
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "email": "director1@gmail.com",
+  "password": "StrongPass123"
+}
+
+<> 2026-02-02T132524.200.json
+
+###
+
+POST http://localhost:8000/api/auth/register/
+content-type: application/json
+Content-Length: 138
+User-Agent: IntelliJ HTTP Client/PyCharm 2025.2.6
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "email": "director1@gmail.com",
+  "first_name": "Ali",
+  "last_name": "Karimov",
+  "password": "StrongPass123",
+  "role": "DIRECTOR"
+}
+
+<> 2026-02-02T132317.400.json
+
+###
+
+POST http://localhost:8000/api/auth/register/
+content-type: application/json
+Content-Length: 138
+User-Agent: IntelliJ HTTP Client/PyCharm 2025.2.6
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "email": "director1@gmail.com",
+  "first_name": "Ali",
+  "last_name": "Karimov",
+  "password": "StrongPass123",
+  "role": "DIRECTOR"
+}
+
+<> 2026-02-02T132312.201.json
+
+###
+
+GET http://localhost:8000/api/auth/me/
+content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4ODQwNTU5LCJpYXQiOjE3Njg4Mzk5NTksImp0aSI6IjE3ODA3ZDRiMDY4NzQzNzliMGE0OTJhNzNlY2FjOGZkIiwidXNlcl9pZCI6IjYiLCJyb2xlIjoiRElSRUNUT1IiLCJlbWFpbCI6ImRpcmVjdG9yMUBnbWFpbC5jb20ifQ.HUPEQuDLqotVpc_TfRoqe8jMVFJO2nZi58PThcIBqlc
 User-Agent: IntelliJ HTTP Client/PyCharm 2025.2.6
 Accept-Encoding: br, deflate, gzip, x-gzip
